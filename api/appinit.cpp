@@ -5,52 +5,55 @@
 #include "qwidget.h"
 
 QScopedPointer<AppInit> AppInit::self;
-AppInit *AppInit::Instance()
+AppInit* AppInit::Instance()
 {
-    if (self.isNull()) {
-        static QMutex mutex;
-        QMutexLocker locker(&mutex);
-        if (self.isNull()) {
-            self.reset(new AppInit);
-        }
-    }
+	if (self.isNull()) {
+		static QMutex mutex;
+		QMutexLocker locker(&mutex);
+		if (self.isNull()) {
+			self.reset(new AppInit);
+		}
+	}
 
-    return self.data();
+	return self.data();
 }
 
-AppInit::AppInit(QObject *parent) : QObject(parent)
+AppInit::AppInit(QObject* parent) : QObject(parent)
 {
 }
 
-bool AppInit::eventFilter(QObject *watched, QEvent *event)
+bool AppInit::eventFilter(QObject* watched, QEvent* event)
 {
-    QWidget *w = (QWidget *)watched;
-    if (!w->property("canMove").toBool()) {
-        return QObject::eventFilter(watched, event);
-    }
+	QWidget* w = (QWidget*)watched;
+	if (!w->property("canMove").toBool()) {
+		return QObject::eventFilter(watched, event);
+	}
 
-    static QPoint mousePoint;
-    static bool mousePressed = false;
+	static QPoint mousePoint;
+	static bool mousePressed = false;
 
-    QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-    if (mouseEvent->type() == QEvent::MouseButtonPress) {
-        if (mouseEvent->button() == Qt::LeftButton) {
-            mousePressed = true;
-            mousePoint = mouseEvent->globalPos() - w->pos();
-        }
-    } else if (mouseEvent->type() == QEvent::MouseButtonRelease) {
-        mousePressed = false;
-    } else if (mouseEvent->type() == QEvent::MouseMove) {
-        if (mousePressed && (mouseEvent->buttons() && Qt::LeftButton)) {
-            w->move(mouseEvent->globalPos() - mousePoint);
-            return true;
-        }
-    }
+	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+	if (mouseEvent->type() == QEvent::MouseButtonPress) {
+		if (mouseEvent->button() == Qt::LeftButton) {
+			mousePressed = true;
+			mousePoint = mouseEvent->globalPos() - w->pos();
+		}
+	}
+	else if (mouseEvent->type() == QEvent::MouseButtonRelease) {
+		mousePressed = false;
+	}
+	else if (mouseEvent->type() == QEvent::MouseMove) {
+		if (mousePressed && (mouseEvent->buttons() && Qt::LeftButton)) {
+			w->move(mouseEvent->globalPos() - mousePoint);
+			return true;
+		}
+	}
 
-    return QObject::eventFilter(watched, event);
+	return QObject::eventFilter(watched, event);
 }
 
 void AppInit::start()
 {
-    qApp->installEventFilter(this);
+
+	qApp->installEventFilter(this);
 }
