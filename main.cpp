@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     user = "admin";
     companyName = "海南泽港科技有限公司@版权所有";
     table_name << "cms_jzy_wendang" << "cms_jzy_ycjkk" << "cms_jzy_yygl";
-    QUIHelper::setStyle(QUIWidget::Style_Silvery);
+    QUIHelper::setStyle(QUIWidget::Style_DarkBlue);
     frmLogin w;
     w.show();
     return a.exec();
